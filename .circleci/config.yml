@@ -174,8 +174,7 @@ jobs:
           name: Send migration results to memstash
           command: |
             RES=`grep "has been executed successfully" ~/migration_output.txt | wc -l`
-            curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.me
-mstash.io/values/${CIRCLE_WORKFLOW_ID}
+            curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID}
      # Here's where you will add some code to rollback on failure
 
 workflows:
