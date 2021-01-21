@@ -135,6 +135,12 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
+          name: Test
+          command: |    
+            ls
+            cat inventory.txt
+            pwd
+      - run:
           name: Install dependencies
           command: |
             apk add --update ansible
