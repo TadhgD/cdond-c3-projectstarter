@@ -92,8 +92,8 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - yum -y install tar
-      - yum -y install gzip
+      - run: yum -y install tar
+      - run: yum -y install gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -110,16 +110,19 @@ jobs:
               --tags project=udapeople \
               --stack-name "tadhg-udapeople-stack-frontend" \
               --parameter-overrides ID="tadhg"  
+      - run: echo [all] > inventory.txt
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Add back-end ip to ansible ~/inventory.txt
           command: |
-            # Your code here
-            exit 1
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople" --output text >> ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure     
+            - inventory.txt
+      # Here's where you will add some code to rollback on failure
 
 workflows:
   default:
