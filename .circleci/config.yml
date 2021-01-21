@@ -181,4 +181,4 @@ workflows:
           #      - master
       - configure-infrastructure:
           requires:
-            deploy-infrastructure
+            - deploy-infrastructure
