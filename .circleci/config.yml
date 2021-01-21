@@ -124,7 +124,33 @@ jobs:
             - inventory.txt
       # Here's where you will add some code to rollback on failure
 
-  
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "eb:57:a0:9b:fb:9d:da:32:45:d4:52:92:1a:86:6f:2f"
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Set up env vars
+          command: |
+            echo TYPEORM_HOST=${TYPEORM_HOST} >> backend/.env
+            echo TYPEORM_PORT=${TYPEORM_PORT} >> backend/.env
+            echo TYPEORM_USERNAME=${TYPEORM_USERNAME} >> backend/.env
+            echo TYPEORM_PASSWORD=${TYPEORM_PASSWORD} >> backend/.env
+            echo TYPEORM_DATABASE=${TYPEORM_DATABASE} >> backend/.env
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt configure-server.yml
+      # Here's where you will add some code to rollback on failure
 
 workflows:
   default:
@@ -153,3 +179,6 @@ workflows:
           #  branches:
           #    only: 
           #      - master
+      - configure-infrastructure:
+          requires:
+            deploy-infrastructure
