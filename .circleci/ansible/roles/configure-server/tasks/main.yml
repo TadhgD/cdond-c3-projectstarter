@@ -1,9 +1,9 @@
 ---
-- name: "Move files to server"
-  become: true
-  copy:
-    src: /root/project/backend/
-    dest: /home/ubuntu/app
+#- name: "Move files to server"
+#  become: true
+#  copy:
+#    src: /root/project/backend/
+#    dest: /home/ubuntu/app
 
 - name: "update apt packages."
   become: yes
