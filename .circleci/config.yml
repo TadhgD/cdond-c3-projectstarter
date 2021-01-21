@@ -110,7 +110,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "tadhg-udapeople-stack-frontend" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
-      - run: echo [all] > inventory.txt
+      - run: echo [all] > ~/inventory.txt
       - run:
           name: Add back-end ip to ansible ~/inventory.txt
           command: |
