@@ -1,5 +1,36 @@
 version: 2.1
 
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      # Add parameter here   
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      # Add parameter here     
+    steps:
+      - run:
+          name: Revert migrations
+          when: 
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS = 1
+            if(( $SUCCESS==1 )); 
+            then
+            #  cd ~/project/backend
+            #  npm install
+            #  Add revert code here. You can find this in the Getting Started section.
+              exit 1
+            fi
+
 jobs:
   build-frontend:
     docker:
@@ -213,6 +244,7 @@ jobs:
             yum install gzip -y
             yum install python3-pip -y
             yum -y install curl -y
+            curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -
             yum install -y nodejs
       - attach_workspace:
           at: ~/
@@ -238,8 +270,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install tar -y
-            yum install gzip -y
+            apk add --update tar gzip
       - checkout
       - add_ssh_keys:
           fingerprints:
