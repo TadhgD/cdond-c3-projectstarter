@@ -145,7 +145,7 @@ jobs:
           command: |
             apk add --update ansible
       - run:
-          name: Set up env vars
+          name: Set up env vars for ec2 instance to use
           command: |
             echo ENVIRONMENT=production > backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
@@ -171,7 +171,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set up env vars
+          name: Set up env vars for migrations job
           command: |
             echo ENVIRONMENT=production > backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
@@ -197,6 +197,36 @@ jobs:
             RES=`grep "has been executed successfully" ~/migration_output.txt | wc -l`
             curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID}
      # Here's where you will add some code to rollback on failure
+
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            yum install tar -y
+            yum install gzip -y
+            yum install python3-pip -y
+            yum -y install curl -y
+            yum install -y nodejs
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=tail -1 ~/inventory.txt
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            cd frontend
+            npm install
+            npm run build
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
+      # Here's where you will add some code to rollback on failure  
 
 workflows:
   default:
@@ -231,6 +261,6 @@ workflows:
       - run-migrations:
           requires:
             - configure-infrastructure
-#      - deploy_frontend:
-#          requires:
-#            - run_migrations
+      - deploy_frontend:
+          requires:
+            - run_migrations
