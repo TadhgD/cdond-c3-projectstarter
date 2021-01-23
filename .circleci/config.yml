@@ -251,7 +251,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=tail -1 ~/inventory.txt
+            export BACKEND_IP=`tail -1 ~/inventory.txt`
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             cd frontend
@@ -283,6 +283,7 @@ jobs:
             apk add --update ansible
       - run:
           name: Deploy backend
+          no_output_timeout: 30m
           command: |
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure

@@ -2,7 +2,7 @@
 - name: "Move files to server"
   become: true
   copy:
-    src: /root/project/backend/.dist/
+    src: /root/project/backend/
     dest: /home/ubuntu/app
 
 - name: Start PM2
