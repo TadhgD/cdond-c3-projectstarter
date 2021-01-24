@@ -193,7 +193,10 @@ jobs:
           name: Configure server
           no_output_timeout: 30m
           command: |
-            ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/configure-server.yml
+            exit 0
+#         command: |
+#           ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/configure-server.yml
+
       # Here's where you will add some code to rollback on failure
 
   run-migrations:
@@ -283,8 +286,10 @@ jobs:
             apk add --update ansible
       - run:
           name: Deploy backend
-          no_output_timeout: 30m
+          no_output_timeout: 45m
           command: |
+            ls -la backend
+#         command: |
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure
 
