@@ -274,6 +274,8 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip
+      - restore_cache:
+          keys: [backend-build]
       - checkout
       - add_ssh_keys:
           fingerprints:
@@ -289,8 +291,6 @@ jobs:
           no_output_timeout: 45m
           command: |
             cd backend
-            npm install
-            npm run build
             ls -la
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure
