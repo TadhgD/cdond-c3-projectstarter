@@ -45,6 +45,7 @@ jobs:
             cd ./frontend
             npm i
             npm run build
+            ls -la
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build2
@@ -62,6 +63,7 @@ jobs:
              cd ./backend
              npm i
              npm run build
+             ls -la
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -193,10 +195,7 @@ jobs:
           name: Configure server
           no_output_timeout: 30m
           command: |
-            exit 0
-#         command: |
-#           ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/configure-server.yml
-
+            ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure
 
   run-migrations:
@@ -258,6 +257,7 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             cd frontend
+            ls -la
             npm install
             npm run build
       - run:
@@ -270,26 +270,36 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
+      - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip
-      - restore_cache:
-          keys: [backend-build]
-      - checkout
+            apk add --update tar gzip ansible
       - add_ssh_keys:
           fingerprints:
             - "eb:57:a0:9b:fb:9d:da:32:45:d4:52:92:1a:86:6f:2f"
       - attach_workspace:
           at: ~/
       - run:
-          name: Install dependencies
+          name: Set up env vars
           command: |
-            apk add --update ansible
+            echo ENVIRONMENT=production > backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> backend.env
+            echo TYPEORM_HOST=${TYPEORM_HOST} >> backend/.env
+            echo TYPEORM_PORT=${TYPEORM_PORT} >> backend/.env
+            echo TYPEORM_USERNAME=${TYPEORM_USERNAME} >> backend/.env
+            echo TYPEORM_PASSWORD=${TYPEORM_PASSWORD} >> backend/.env
+            echo TYPEORM_DATABASE=${TYPEORM_DATABASE} >> backend/.env
+            cat backend/.env
       - run:
           name: Deploy backend
           no_output_timeout: 45m
           command: |
+            tar -czvf backend.tar.gz ./backend
+            ls -la
             cd backend
             ls -la
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml

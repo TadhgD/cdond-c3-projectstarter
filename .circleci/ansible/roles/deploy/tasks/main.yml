@@ -1,9 +1,16 @@
 ---
 - name: "Move files to server"
   become: true
-  copy:
-    src: /root/project/backend/.dist/
+  unarchive:
+    src: /root/project/backend.tar.tgz
     dest: /home/ubuntu/app
+
+- name: Build stuff
+  become: true
+  shell: |
+    ls
+    npm i
+    npm run build
 
 - name: Start PM2
   shell: |
