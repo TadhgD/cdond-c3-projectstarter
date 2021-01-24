@@ -288,7 +288,10 @@ jobs:
           name: Deploy backend
           no_output_timeout: 45m
           command: |
-            ls -la backend
+            cd backend
+            npm install
+            npm run build
+            ls -la
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure
 
