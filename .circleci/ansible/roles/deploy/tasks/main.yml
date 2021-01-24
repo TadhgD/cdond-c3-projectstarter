@@ -5,13 +5,6 @@
     src: /root/project/backend.tar.gz
     dest: /home/ubuntu/app
 
-- name: Build stuff
-  become: true
-  shell: |
-    ls
-    npm i
-    npm run build
-
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app
