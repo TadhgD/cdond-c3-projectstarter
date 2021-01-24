@@ -2,7 +2,7 @@
 - name: "Move files to server"
   become: true
   unarchive:
-    src: /root/project/backend.tar.tgz
+    src: /root/project/backend.tar.gz
     dest: /home/ubuntu/app
 
 - name: Build stuff
