@@ -28,7 +28,7 @@ commands:
           command: |
             RES=$(curl -H "token: ${MEMSTASH_KEY}" --request GET https://api.memstash.io/values/tadhgstash_<< parameters.workflow_id >>)
             echo ${RES}
-            if [[ ${MIGRATION_RESULT} -eq 1 ]]
+            if [[ ${RES} -eq 1 ]]
             then
               cd backend
               npm install
@@ -324,6 +324,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip curl
+            pip install awscli
       - attach_workspace:
           at: ~/
       - run:
