@@ -4,31 +4,35 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      workflow_id:
+        type: string
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
+            echo "S3 bucket name: s3://udapeople-<< parameters.workflow_id >>"
+            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      workflow_id:
+        type: string
     steps:
       - run:
           name: Revert migrations
-          when: 
+          when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS==1 )); 
+            RES=$(curl -H "token: ${MEMSTASH_KEY}" --request GET https://api.memstash.io/values/tadhgstash_<< parameters.workflow_id >>)
+            echo ${RES}
+            if [[ ${MIGRATION_RESULT} -eq 1 ]]
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              cd backend
+              npm install
+              npm run migrations:revert
             fi
 
 jobs:
@@ -232,7 +236,7 @@ jobs:
             echo ${RES}
             echo ${MEMSTASH_KEY}
             echo ${CIRCLE_WORKFLOW_ID}
-            #curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID}
+            curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.memstash.io/values/tadhgstash_${CIRCLE_WORKFLOW_ID}
      # Here's where you will add some code to rollback on failure
 
   deploy-frontend:
@@ -339,7 +343,10 @@ jobs:
             else
             return 0
             fi
-      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
 
 workflows:
   default:
