@@ -429,6 +429,7 @@ jobs:
               echo ${OldWorkflowID}
               echo ${OldWorkflowID:6}
               echo "s3://udapeople-${OldWorkflowID:6}"
+              aws s3 ls "s3://udapeople-${OldWorkflowID:6}"
         - run:
             name: Remove old stacks and files
             command: |
