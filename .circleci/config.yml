@@ -182,6 +182,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            pip install awscli
       - run:
           name: Set up env vars for ec2 instance to use
           command: |
@@ -209,6 +210,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Set up env vars for migrations job
           command: |
@@ -240,8 +248,6 @@ jobs:
             echo ${CIRCLE_WORKFLOW_ID}
             curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_KEY}" --request PUT --data "${RES}" https://api.memstash.io/values/tadhgstash_${CIRCLE_WORKFLOW_ID}
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   deploy-frontend:
@@ -287,7 +293,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm
+            apk add --update tar gzip ansible nodejs npm curl
+            pip install awscli
       - add_ssh_keys:
           fingerprints:
             - "eb:57:a0:9b:fb:9d:da:32:45:d4:52:92:1a:86:6f:2f"
