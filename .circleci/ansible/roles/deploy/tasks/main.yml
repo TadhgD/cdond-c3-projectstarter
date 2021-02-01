@@ -5,10 +5,10 @@
     src: /root/project/backend.tar.gz
     dest: /home/ubuntu/app
 
-- name: Run migrations
-  shell: |
-    cd /home/ubuntu/app/backend
-    sudo npm run migrations
+#- name: Run migrations
+#  shell: |
+#    cd /home/ubuntu/app/backend
+#    sudo npm run migrations
 
 - name: Start PM2
   shell: |
