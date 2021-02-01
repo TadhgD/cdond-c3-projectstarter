@@ -17,15 +17,15 @@
     cd /home/ubuntu/app/backend
     npm run build
 
-- name: Prestart
-  become: true
-  shell: |
-    cd /home/ubuntu/app/backend
-    npm run prestart:prod
+#- name: Prestart
+#  become: true
+#  shell: |
+#    cd /home/ubuntu/app/backend
+#    npm run prestart:prod
 
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app/backend
-    pm2 start npm -- run "start:prod"
+    pm2 start npm -- run "start:dev"
   
 
