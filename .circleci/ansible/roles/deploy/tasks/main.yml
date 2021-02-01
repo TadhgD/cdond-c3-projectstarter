@@ -26,6 +26,6 @@
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app/backend
-    pm2 start npm -- run "start:dev"
+    pm2 start npm -- run "start:dev" # Cannot connect to database in :prod mode, but it can in dev mode?
   
 
