@@ -396,7 +396,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name tadhg-udapeople-stack \
-              --parameter-overrides WorkflowID="tadhg-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
       - persist_to_workspace:
           root: ~/
           paths:
