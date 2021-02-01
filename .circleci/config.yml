@@ -11,7 +11,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws s3 rm s3://udapeople-tadhg-<< parameters.workflow_id >> --recursive
             aws cloudformation delete-stack --stack-name tadhg-<< parameters.workflow_id >>-udapeople-stack-backend
             aws cloudformation delete-stack --stack-name tadhg-<< parameters.workflow_id >>-udapeople-stack-frontend
 
@@ -281,7 +281,7 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
+            aws s3 cp frontend/dist "s3://udapeople-tadhg-${CIRCLE_WORKFLOW_ID}" --recursive
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations:
@@ -322,7 +322,7 @@ jobs:
           no_output_timeout: 45m
           command: |
             cd backend
-            npm i
+            npm install
             npm run build
             cd ..
             tar -czf backend.tar.gz ./backend

@@ -7,12 +7,12 @@
 
 - name: "install package"
   shell: |
-    cd /home/ubuntu/backend
+    cd /home/ubuntu/app/backend
     sudo npm install
     
 - name: "run migrations"
   shell: |
-    cd /home/ubuntu/backend
+    cd /home/ubuntu/app/backend
     sudo npm run migrations
 
 - name: Start PM2
