@@ -5,6 +5,10 @@
     src: /root/project/backend.tar.gz
     dest: /home/ubuntu/app
 
+- name: Run install
+  shell: |
+    npm install
+
 #- name: Run migrations
 #  shell: |
 #    cd /home/ubuntu/app/backend
@@ -13,6 +17,6 @@
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app/backend
-    pm2 start npm -- run start
+    pm2 start npm -- run "start:dev"
   
 
