@@ -186,7 +186,8 @@ jobs:
       - run:
           name: Set up env vars for ec2 instance to use
           command: |
-            echo ENVIRONMENT=production > backend/.env
+            echo NODE_ENV=${NODE_ENV} > backend/.env
+            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -220,7 +221,8 @@ jobs:
       - run:
           name: Set up env vars for migrations job
           command: |
-            echo ENVIRONMENT=production > backend/.env
+            echo NODE_ENV=${NODE_ENV} > backend/.env
+            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -303,7 +305,8 @@ jobs:
       - run:
           name: Set up env vars
           command: |
-            echo ENVIRONMENT=production > backend/.env
+            echo NODE_ENV=${NODE_ENV} > backend/.env
+            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -354,7 +357,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-1.amazonaws.com"
+            export FRONTEND_URL="http://udapeople-tadhg-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-1.amazonaws.com"
             echo ${FRONTEND_URL}
             if curl -s ${FRONTEND_URL} | grep "Welcome"
             then
@@ -430,7 +433,7 @@ jobs:
 
               if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
-                aws s3 rb "s3://udapeople-${OldWorkflowID:6}" --force
+                aws s3 rb "s3://udapeople-tadhg-${OldWorkflowID:6}" --force
                 aws cloudformation delete-stack --stack-name "${OldWorkflowID}-udapeople-stack-backend"
                 aws cloudformation delete-stack --stack-name "${OldWorkflowID}-udapeople-stack-frontend"
               fi
