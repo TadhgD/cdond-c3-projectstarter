@@ -11,7 +11,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm s3://udapeople-tadhg-<< parameters.workflow_id >> --recursive
+            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
             aws cloudformation delete-stack --stack-name tadhg-<< parameters.workflow_id >>-udapeople-stack-backend
             aws cloudformation delete-stack --stack-name tadhg-<< parameters.workflow_id >>-udapeople-stack-frontend
 
@@ -186,8 +186,7 @@ jobs:
       - run:
           name: Set up env vars for ec2 instance to use
           command: |
-            echo NODE_ENV=${NODE_ENV} > backend/.env
-            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
+            echo ENVIRONMENT=production > backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -221,8 +220,7 @@ jobs:
       - run:
           name: Set up env vars for migrations job
           command: |
-            echo NODE_ENV=${NODE_ENV} > backend/.env
-            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
+            echo ENVIRONMENT=production > backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -281,7 +279,7 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            aws s3 cp frontend/dist "s3://udapeople-tadhg-${CIRCLE_WORKFLOW_ID}" --recursive
+            aws s3 cp frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations:
@@ -305,8 +303,7 @@ jobs:
       - run:
           name: Set up env vars
           command: |
-            echo NODE_ENV=${NODE_ENV} > backend/.env
-            echo ENVIRONMENT=${ENVIRONMENT} >> backend/.env
+            echo ENVIRONMENT=production > backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
@@ -322,7 +319,7 @@ jobs:
           no_output_timeout: 45m
           command: |
             cd backend
-            npm install
+            npm i
             npm run build
             cd ..
             tar -czf backend.tar.gz ./backend
@@ -357,7 +354,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            export FRONTEND_URL="http://udapeople-tadhg-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-1.amazonaws.com"
+            export FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-1.amazonaws.com"
             echo ${FRONTEND_URL}
             if curl -s ${FRONTEND_URL} | grep "Welcome"
             then
@@ -396,7 +393,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name tadhg-udapeople-stack \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="tadhg-${CIRCLE_WORKFLOW_ID}"
       - persist_to_workspace:
           root: ~/
           paths:
@@ -433,7 +430,7 @@ jobs:
 
               if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
-                aws s3 rb "s3://udapeople-tadhg-${OldWorkflowID:6}" --force
+                aws s3 rb "s3://udapeople-${OldWorkflowID:6}" --force
                 aws cloudformation delete-stack --stack-name "${OldWorkflowID}-udapeople-stack-backend"
                 aws cloudformation delete-stack --stack-name "${OldWorkflowID}-udapeople-stack-frontend"
               fi
@@ -468,17 +465,15 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
-#      - run-migrations:
-#          requires:
-#            - configure-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure
       - deploy-frontend:
           requires:
-            - configure-infrastructure
-#            - run-migrations
+            - run-migrations
       - deploy-backend:
           requires:
-            - configure-infrastructure
-#            - run-migrations
+            - run-migrations
       - smoke-test:
           requires:
             - deploy-frontend
