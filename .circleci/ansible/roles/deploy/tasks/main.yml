@@ -5,18 +5,27 @@
     src: /root/project/backend.tar.gz
     dest: /home/ubuntu/app
 
-- name: Run install
+- name: Install
+  become: true
   shell: |
+    cd /home/ubuntu/app/backend
     npm install
 
-#- name: Run migrations
-#  shell: |
-#    cd /home/ubuntu/app/backend
-#    sudo npm run migrations
+- name: Build
+  become: true
+  shell: | 
+    cd /home/ubuntu/app/backend
+    npm run build
+
+- name: Prestart
+  become: true
+  shell: |
+    cd /home/ubuntu/app/backend
+    npm run prestart:prod
 
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app/backend
-    pm2 start npm -- run "start:dev"
+    pm2 start npm -- run "start:prod"
   
 
