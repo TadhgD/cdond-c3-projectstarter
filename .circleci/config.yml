@@ -53,7 +53,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - frontend/dist
+            - project/frontend/dist
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build2
@@ -79,7 +79,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - backend/dist
+            - project/backend/dist
 
   test-frontend:
     docker:
