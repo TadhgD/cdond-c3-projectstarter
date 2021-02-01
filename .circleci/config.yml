@@ -49,6 +49,7 @@ jobs:
             npm i
             npm run build
             ls -la
+            pwd
       - persist_to_workspace:
           root: ~/
           paths:
@@ -71,6 +72,7 @@ jobs:
              npm i
              npm run build
              ls -la
+             pwd
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
