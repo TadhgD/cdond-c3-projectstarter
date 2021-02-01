@@ -50,6 +50,7 @@ jobs:
             npm run build
             ls -la
             pwd
+            ls ~/
       - persist_to_workspace:
           root: ~/
           paths:
@@ -229,6 +230,8 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Set up env vars for migrations job
           command: |
