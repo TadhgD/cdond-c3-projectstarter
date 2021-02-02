@@ -300,8 +300,8 @@ jobs:
             echo "${API_URL}" > frontend/.env
             cd frontend
             ls -la
-            npm install
-            npm run build
+            sudo npm install
+            sudo npm run build
       - run:
           name: Deploy frontend objects
           command: |
