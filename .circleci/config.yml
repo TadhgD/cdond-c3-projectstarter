@@ -283,6 +283,8 @@ jobs:
             yum install -y nodejs
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [frontend-build2]
       - run:
           name: Get backend url
           command: |
@@ -293,6 +295,7 @@ jobs:
             cd frontend
             ls -la
             npm install
+            npm install --save-dev webpack-cli # Test
             npm run build
       - run:
           name: Deploy frontend objects
@@ -345,6 +348,7 @@ jobs:
             ls -la
             cd backend
             ls -la
+            cat ~/inventory.txt
             ansible-playbook -i ~/inventory.txt /root/project/.circleci/ansible/deploy-backend.yml
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
