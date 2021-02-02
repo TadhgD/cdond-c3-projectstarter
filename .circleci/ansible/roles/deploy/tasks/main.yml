@@ -17,15 +17,9 @@
     cd /home/ubuntu/app/backend
     npm run build
 
-#- name: Prestart
-#  become: true
-#  shell: |
-#    cd /home/ubuntu/app/backend
-#    npm run prestart:prod
-
 - name: Start PM2
   shell: |
     cd /home/ubuntu/app/backend
-    pm2 start npm -- run "start:dev" # Cannot connect to database in :prod mode, but it can in dev mode?
+    pm2 start npm -- run start
   
 

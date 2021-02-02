@@ -289,10 +289,11 @@ jobs:
             export BACKEND_IP=`tail -1 ~/inventory.txt`
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            echo "${API_URL}" > frontend/.env
             cd frontend
             ls -la
-            #npm install
-            #npm run build
+            npm install
+            npm run build
       - run:
           name: Deploy frontend objects
           command: |
@@ -445,7 +446,9 @@ jobs:
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
               echo ${STACKS}
               echo ${OldWorkflowID}
-
+              echo "Deleting s3 bucket:      s3://udapeople-${OldWorkflowID:6}"
+              echo "Deleting backend stack:  ${OldWorkflowID}-udapeople-stack-backend"
+              echo "Deleting frontend stack: ${OldWorkflowID}-udapeople-stack-frontend"
               if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
                 aws s3 rb "s3://udapeople-${OldWorkflowID:6}" --force
