@@ -289,6 +289,7 @@ jobs:
             echo "${API_URL}"
             echo "API_URL=${API_URL}" > frontend/.env
             cd frontend
+            cat .env
             ls -la
             sudo npm install
             sudo npm run build
